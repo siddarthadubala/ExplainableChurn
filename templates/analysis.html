@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dataset Analysis - ChurnSense AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        .chart-container {
+            width: 100%;
+            max-width: 600px;
+            height: 350px;
+            margin: 30px auto;
+        }
+
+        .high-risk-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 30px;
+        }
+
+        .high-risk-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .high-risk-card h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .high-risk-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .high-risk-count {
+            margin-bottom: 25px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .high-risk-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .high-risk-card th {
+            background: #f5f7fa;
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .high-risk-card td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .customer-button {
+            background: none;
+            border: none;
+            padding: 0;
+            color: #2563eb;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .customer-button:hover {
+            text-decoration: underline;
+        }
+
+        .no-risk-message {
+            color: #666;
+            padding: 20px 0;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        ChurnSense AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">Home</a>
+
+        <a href="/#about">About</a>
+
+        <a href="/#upload">Analyze</a>
+
+    </div>
+
+</nav>
+
+
+
+<section class="analysis-section">
+
+
+    <div class="section-heading">
+
+        <span>DATA ANALYTICS</span>
+
+        <h1>Dataset Analysis</h1>
+
+        <p>
+            Initial analysis of the uploaded customer dataset.
+        </p>
+
+    </div>
+
+
+
+    <div class="stats-container">
+
+
+        <div class="stat-card">
+
+            <h3>Total Customers</h3>
+
+            <p>{{ rows }}</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Total Features</h3>
+
+            <p>{{ columns }}</p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>Missing Values</h3>
+
+            <p>{{ missing }}</p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="data-card">
+
+        <h2>Dataset Columns</h2>
+
+        <div class="column-list">
+
+            {% for column in column_names %}
+
+                <span>
+                    {{ column }}
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
+    <div class="data-card">
+
+        <h2>Missing Values by Column</h2>
+
+        <div class="column-list">
+
+            {% for column, value in missing_by_column.items() %}
+
+                <span>
+                    {{ column }} : {{ value }}
+                </span>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+
+    <div class="data-card">
+
+        <h2>Customer Churn Distribution</h2>
+
+        <div class="chart-container">
+
+    <div
+        id="churnData"
+        data-no="{{ churn_counts.get('No', 0) }}"
+        data-yes="{{ churn_counts.get('Yes', 0) }}"
+    ></div>
+
+    <canvas id="churnChart"></canvas>
+
+</div>
+
+    </div>
+
+
+</section>
+
+
+
+<section class="high-risk-section">
+
+
+    <div class="high-risk-card">
+
+
+        <h2>🚨 High-Risk Customers</h2>
+
+
+        <p class="high-risk-description">
+
+            Customers with a model-predicted churn probability
+            of 70% or higher are shown below.
+
+        </p>
+
+
+        <h3 class="high-risk-count">
+
+            High-Risk Customers:
+            {{ total_high_risk }}
+
+        </h3>
+
+
+
+        {% if prediction_records %}
+
+
+        <div class="table-container">
+
+
+            <table>
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Customer ID
+                        </th>
+
+                        <th>
+                            Churn Probability
+                        </th>
+
+                        <th>
+                            Risk
+                        </th>
+
+                        <th>
+                            Prediction
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for customer in prediction_records %}
+
+
+                    <tr>
+
+
+                        <td>
+
+                            <form
+                                action="/simulation"
+                                method="POST"
+                            >
+
+                                <input
+                                    type="hidden"
+                                    name="customer_id"
+                                    value="{{ customer['customerID'] }}"
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="customer-button"
+                                >
+                                    {{ customer["customerID"] }}
+                                </button>
+
+                            </form>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ customer["Churn Probability"] }}%
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ customer["Risk"] }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ customer["Prediction"] }}
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+        {% else %}
+
+
+        <p class="no-risk-message">
+
+            No high-risk customers were identified.
+
+        </p>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        ChurnSense AI | Explainable Customer Churn Prediction
+    </p>
+
+</footer>
+
+
+
+<script>
+
+    const churnData = document.getElementById("churnData");
+
+    const noCount = Number(churnData.dataset.no);
+    const yesCount = Number(churnData.dataset.yes);
+
+    const chartCanvas = document.getElementById("churnChart");
+
+    new Chart(chartCanvas, {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: ["No", "Yes"],
+
+            datasets: [{
+
+                data: [noCount, yesCount],
+
+                borderWidth: 2
+
+            }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: false,
+
+            plugins: {
+
+                legend: {
+
+                    position: "bottom"
+
+                }
+
+            }
+
+        }
+
+    });
+
+</script>
+
+
+
+</body>
+
+</html>

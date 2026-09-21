@@ -1,0 +1,5 @@
+Model,Accuracy,Precision,Recall,F1 Score,ROC-AUC
+Random Forest,0.7637,0.5482,0.623,0.5832,0.823
+Gradient Boosting,0.8027,0.6644,0.5187,0.5826,0.8432
+XGBoost,0.8034,0.6622,0.5294,0.5884,0.8455
+Soft-Voting Ensemble,0.7956,0.6236,0.5802,0.6011,0.8418

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Adaptive Simulation - ChurnSense AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .navbar {
+            height: 72px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1f2937;
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .page-header {
+            max-width: 1200px;
+            margin: 50px auto 30px;
+            padding: 0 30px;
+        }
+
+        .page-header h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 18px;
+            color: #6b7280;
+        }
+
+        .simulation-container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 30px 50px;
+        }
+
+        .simulation-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .simulation-card h2 {
+            margin-top: 0;
+            font-size: 26px;
+        }
+
+        .simulation-card h3 {
+            margin-top: 20px;
+        }
+
+        .simulation-card p {
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input[type="text"] {
+            width: 280px;
+            max-width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .analyze-button {
+            margin-left: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #111827;
+            color: white;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .analyze-button:hover {
+            background: #2563eb;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 15px;
+            color: #6b7280;
+            margin: 0 0 12px;
+        }
+
+        .stat-card p {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            color: #111827;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        ul {
+            line-height: 2;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            margin-top: 25px;
+        }
+
+        .note {
+            background: #f8fafc;
+            border-left: 4px solid #64748b;
+            padding: 15px 18px;
+            margin-top: 20px;
+            border-radius: 6px;
+            line-height: 1.6;
+        }
+
+        .risk-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 900px) {
+
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .navbar {
+                padding: 0 4%;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                height: auto;
+                padding: 20px;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .analyze-button {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        ChurnSense AI
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/">
+            Home
+        </a>
+
+        <a href="/analysis">
+            Analysis
+        </a>
+
+        <a href="/simulation">
+            Simulation
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<section class="page-header">
+
+    <h1>
+        Adaptive Customer-State Simulation
+    </h1>
+
+    <p>
+        Simulate feasible customer-state changes and compare
+        predicted churn risk.
+    </p>
+
+</section>
+
+
+
+<section class="simulation-container">
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Customer State
+        </h2>
+
+        <p>
+            Select a customer to begin simulation.
+        </p>
+
+        <form method="POST">
+
+            <label>
+                Customer ID
+            </label>
+
+            <input
+                type="text"
+                name="customer_id"
+                placeholder="Enter Customer ID"
+                required
+            >
+
+            <button
+                type="submit"
+                class="analyze-button"
+            >
+                Analyze Customer
+            </button>
+
+        </form>
+
+    </div>
+
+
+
+    {% if customer %}
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Customer Prediction
+        </h2>
+
+        <p>
+            Customer ID:
+            <strong>
+                {{ customer_id }}
+            </strong>
+        </p>
+
+        <p>
+            Model-Predicted Churn Probability:
+            <strong>
+                {{ probability }}%
+            </strong>
+        </p>
+
+    </div>
+
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Explainable AI
+        </h2>
+
+        <p>
+            Top factors contributing to this customer's
+            predicted churn risk.
+        </p>
+
+
+        {% if explanations %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Feature
+                        </th>
+
+                        <th>
+                            SHAP Value
+                        </th>
+
+                        <th>
+                            Effect
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for item in explanations %}
+
+                    <tr>
+
+                        <td>
+                            {{ item["feature"] }}
+                        </td>
+
+                        <td>
+                            {{ item["shap_value"] }}
+                        </td>
+
+                        <td>
+                            {{ item["direction"] }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>
+            No explanation available.
+        </p>
+
+        {% endif %}
+
+    </div>
+
+
+
+    <div class="stats-container">
+
+
+        <div class="stat-card">
+
+            <h3>
+                Current Predicted Churn Risk
+            </h3>
+
+            <p>
+                {{ probability }}%
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Scenarios Generated
+            </h3>
+
+            <p>
+                {{ total_scenarios }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Risk-Decreasing States
+            </h3>
+
+            <p>
+                {{ risk_decreased }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Risk-Increasing States
+            </h3>
+
+            <p>
+                {{ risk_increased }}
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Scenario Risk Comparison
+        </h2>
+
+        <p>
+            Comparison of the original customer state with
+            simulated customer states.
+        </p>
+
+        <div class="chart-container">
+
+            <canvas id="scenarioChart"></canvas>
+
+        </div>
+
+    </div>
+
+
+
+    {% if best_scenario %}
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Strongest Simulated State Transition
+        </h2>
+
+        <p>
+            The following feasible customer-state change produced
+            the largest reduction in predicted churn probability
+            among the generated scenarios.
+        </p>
+
+        <h3>
+            Scenario {{ best_scenario["scenario"] }}
+        </h3>
+
+        <p>
+            Original Predicted Churn Probability:
+            <strong>
+                {{ "%.2f"|format(
+                    best_scenario["original_probability"] * 100
+                ) }}%
+            </strong>
+        </p>
+
+        <p>
+            Simulated Predicted Churn Probability:
+            <strong>
+                {{ "%.2f"|format(
+                    best_scenario["simulated_probability"] * 100
+                ) }}%
+            </strong>
+        </p>
+
+        <p>
+            Model-Based Reduction:
+            <strong>
+                {{ "%.2f"|format(
+                    best_scenario["probability_change"] * 100
+                ) }}
+                percentage points
+            </strong>
+        </p>
+
+        <h3>
+            Simulated Customer-State Changes
+        </h3>
+
+        <ul>
+
+            {% for feature, value in best_scenario["changes"].items() %}
+
+            <li>
+                <strong>
+                    {{ feature }}
+                </strong>
+                → {{ value }}
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+        <div class="note">
+
+            <strong>
+                Interpretation:
+            </strong>
+
+            This represents a model-based simulated state
+            transition, not a guaranteed causal reduction
+            in actual customer churn.
+
+        </div>
+
+    </div>
+
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Retention Decision Support
+        </h2>
+
+        <p>
+            The strongest simulated state transition is presented
+            as a model-based decision-support result.
+        </p>
+
+
+        <div class="stats-container">
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Current Risk
+                </h3>
+
+                <p>
+                    {{ "%.2f"|format(
+                        best_scenario["original_probability"] * 100
+                    ) }}%
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Simulated Risk
+                </h3>
+
+                <p>
+                    {{ "%.2f"|format(
+                        best_scenario["simulated_probability"] * 100
+                    ) }}%
+                </p>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <h3>
+                    Model-Based Change
+                </h3>
+
+                <p>
+                    {{ "%.2f"|format(
+                        best_scenario["probability_change"] * 100
+                    ) }}
+                    pp
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <h3>
+            Suggested Retention Focus
+        </h3>
+
+        <ul>
+
+            {% for feature, value in best_scenario["changes"].items() %}
+
+            <li>
+
+                Consider evaluating the feasibility of:
+
+                <strong>
+                    {{ feature }}
+                </strong>
+
+                → {{ value }}
+
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+
+        <div class="note">
+
+            <strong>
+                Decision-support note:
+            </strong>
+
+            The suggested changes are generated from feasible
+            customer-state simulations. They indicate how the
+            trained model responds to the simulated state and
+            should not be interpreted as guaranteed causal
+            retention actions.
+
+        </div>
+
+    </div>
+
+
+    {% endif %}
+
+
+
+    <div class="simulation-card">
+
+        <h2>
+            Adaptive Customer-State Simulation
+        </h2>
+
+        <p>
+            Feasible virtual customer-state changes generated
+            for this customer.
+        </p>
+
+
+        {% if scenario_results %}
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Scenario
+                        </th>
+
+                        <th>
+                            Changes
+                        </th>
+
+                        <th>
+                            Original Risk
+                        </th>
+
+                        <th>
+                            Simulated Risk
+                        </th>
+
+                        <th>
+                            Change
+                        </th>
+
+                        <th>
+                            Risk Direction
+                        </th>
+
+                        <th>
+                            Impact
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for scenario in scenario_results %}
+
+
+                    <tr>
+
+                        <td>
+                            {{ scenario["scenario"] }}
+                        </td>
+
+
+                        <td>
+
+                            {% for feature, value in scenario["changes"].items() %}
+
+                            <strong>
+                                {{ feature }}
+                            </strong>
+
+                            → {{ value }}
+
+                            {% if not loop.last %}
+
+                            <br>
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ "%.2f"|format(
+                                scenario["original_probability"] * 100
+                            ) }}%
+
+                        </td>
+
+
+                        <td>
+
+                            {{ "%.2f"|format(
+                                scenario["simulated_probability"] * 100
+                            ) }}%
+
+                        </td>
+
+
+                        <td>
+
+                            {{ "%.2f"|format(
+                                scenario["probability_change"] * 100
+                            ) }}
+
+                            percentage points
+
+                        </td>
+
+
+                        <td>
+
+                            {{ scenario["risk_direction"] }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ scenario["impact"] }}
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+        <p>
+            No feasible scenarios were generated.
+        </p>
+
+        {% endif %}
+
+
+    </div>
+
+
+    {% endif %}
+
+
+</section>
+
+
+
+<footer>
+
+    <p>
+        ChurnSense AI |
+        Explainable Customer Churn Prediction
+    </p>
+
+</footer>
+
+
+
+{% if customer and chart_data %}
+
+<div id="chartDataContainer" style="display:none;">
+
+    {% for item in chart_data %}
+
+    <div
+        class="chart-data-item"
+        data-scenario="{{ item['scenario'] }}"
+        data-original="{{ item['original'] }}"
+        data-simulated="{{ item['simulated'] }}"
+    ></div>
+
+    {% endfor %}
+
+</div>
+
+
+<script>
+
+    const chartItems =
+        document.querySelectorAll(".chart-data-item");
+
+    const labels = [];
+
+    const originalValues = [];
+
+    const simulatedValues = [];
+
+
+    chartItems.forEach(function(item) {
+
+        labels.push(
+            item.dataset.scenario
+        );
+
+        originalValues.push(
+            Number(item.dataset.original)
+        );
+
+        simulatedValues.push(
+            Number(item.dataset.simulated)
+        );
+
+    });
+
+
+    const chartCanvas =
+        document.getElementById("scenarioChart");
+
+
+    if (chartCanvas && labels.length > 0) {
+
+        new Chart(chartCanvas, {
+
+            type: "bar",
+
+            data: {
+
+                labels: labels,
+
+                datasets: [
+
+                    {
+
+                        label:
+                            "Original Churn Probability",
+
+                        data:
+                            originalValues,
+
+                        borderWidth: 1
+
+                    },
+
+                    {
+
+                        label:
+                            "Simulated Churn Probability",
+
+                        data:
+                            simulatedValues,
+
+                        borderWidth: 1
+
+                    }
+
+                ]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                scales: {
+
+                    y: {
+
+                        beginAtZero: true,
+
+                        max: 100,
+
+                        title: {
+
+                            display: true,
+
+                            text:
+                                "Churn Probability (%)"
+
+                        }
+
+                    },
+
+                    x: {
+
+                        title: {
+
+                            display: true,
+
+                            text:
+                                "Simulation Scenario"
+
+                        }
+
+                    }
+
+                },
+
+                plugins: {
+
+                    legend: {
+
+                        display: true,
+
+                        position: "top"
+
+                    }
+
+                }
+
+            }
+
+        });
+
+    }
+
+</script>
+
+{% endif %}
+
+
+
+</body>
+
+</html>

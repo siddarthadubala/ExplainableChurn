@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>ChurnSense AI</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+    <nav class="navbar">
+
+        <div class="logo">
+            ChurnSense AI
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="#about">About</a>
+
+            <a href="#methodology">Methodology</a>
+
+            <a href="#upload">Analyze</a>
+
+        </div>
+
+    </nav>
+
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <div class="tagline">
+                EXPLAINABLE AI • ENSEMBLE LEARNING • DATA ANALYTICS
+            </div>
+
+            <h1>
+                Predict Customer Churn
+                Before It Happens.
+            </h1>
+
+            <p>
+                An explainable machine learning framework that
+                predicts customer churn, identifies important
+                factors behind predictions, and supports
+                customer retention decisions.
+            </p>
+
+            <a href="#upload" class="primary-btn">
+                Analyze Customers →
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <section class="features" id="about">
+
+        <div class="section-heading">
+
+            <h2>
+                Intelligent Customer Churn Analysis
+            </h2>
+
+            <p>
+                Our system combines machine learning,
+                explainable AI and customer-state simulation.
+            </p>
+
+        </div>
+
+
+        <div class="feature-container">
+
+            <div class="feature-card">
+
+                <h3>
+                    Data Analytics
+                </h3>
+
+                <p>
+                    Analyze customer data, identify patterns,
+                    handle missing values and prepare the
+                    dataset for machine learning.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    Ensemble Learning
+                </h3>
+
+                <p>
+                    Compare multiple machine learning models
+                    and combine their predictions to develop
+                    a robust churn prediction framework.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <h3>
+                    Explainable AI
+                </h3>
+
+                <p>
+                    Explain individual churn predictions and
+                    identify the customer attributes that
+                    contribute to the predicted risk.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="upload-section" id="upload">
+
+        <div class="upload-box">
+
+            <h2>
+                Analyze Your Customer Dataset
+            </h2>
+
+            <p>
+                Upload a CSV dataset to begin customer
+                churn analysis.
+            </p>
+
+
+            <form
+                action="/upload"
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <div class="file-input">
+
+                    <input
+                        type="file"
+                        name="file"
+                        accept=".csv"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-btn"
+                >
+                    Analyze Dataset →
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            ChurnSense AI | Explainable Customer Churn Prediction
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

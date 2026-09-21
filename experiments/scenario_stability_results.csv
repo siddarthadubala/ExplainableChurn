@@ -1,0 +1,21 @@
+scenario_number,scenario,original_probability,simulated_probability,probability_change
+1,"{'OnlineSecurity': 'Yes', 'Contract': 'Two year'}",0.6775051,0.07740831,0.60009676
+2,"{'OnlineSecurity': 'Yes', 'Contract': 'One year'}",0.6775051,0.15311107,0.52439404
+3,{'Contract': 'Two year'},0.6775051,0.17705818,0.5004469
+4,{'Contract': 'One year'},0.6775051,0.25960252,0.41790256
+5,"{'OnlineSecurity': 'Yes', 'PaperlessBilling': 'No'}",0.6775051,0.40711224,0.27039284
+6,"{'OnlineSecurity': 'Yes', 'TechSupport': 'Yes'}",0.6775051,0.43258202,0.24492306
+7,{'PaperlessBilling': 'No'},0.6775051,0.5064888,0.17101628
+8,{'TechSupport': 'Yes'},0.6775051,0.52331805,0.15418702
+9,"{'OnlineBackup': 'No', 'TechSupport': 'Yes'}",0.6775051,0.5550469,0.12245816
+10,{'OnlineSecurity': 'Yes'},0.6775051,0.5925408,0.084964275
+11,"{'OnlineSecurity': 'Yes', 'OnlineBackup': 'No'}",0.6775051,0.61571115,0.061793923
+12,"{'OnlineSecurity': 'Yes', 'StreamingMovies': 'Yes'}",0.6775051,0.61654615,0.060958922
+13,"{'OnlineSecurity': 'Yes', 'DeviceProtection': 'Yes'}",0.6775051,0.6380298,0.039475262
+14,"{'OnlineSecurity': 'Yes', 'StreamingTV': 'Yes'}",0.6775051,0.6547381,0.022766948
+15,{'StreamingMovies': 'Yes'},0.6775051,0.7023343,-0.024829209
+16,{'OnlineBackup': 'No'},0.6775051,0.71286076,-0.035355687
+17,{'DeviceProtection': 'Yes'},0.6775051,0.71424115,-0.03673607
+18,{'StreamingTV': 'Yes'},0.6775051,0.72194844,-0.04444337
+19,"{'OnlineBackup': 'No', 'DeviceProtection': 'Yes'}",0.6775051,0.7352128,-0.057707727
+20,"{'OnlineBackup': 'No', 'StreamingTV': 'Yes'}",0.6775051,0.7493104,-0.0718053
